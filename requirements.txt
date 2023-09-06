@@ -1,0 +1,5 @@
+openai
+numpy
+sounddevice
+pydub
+charactr-api-sdk
