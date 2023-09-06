@@ -1,4 +1,5 @@
 import json
+import os
 import openai
 import numpy as np
 import sounddevice as sd
@@ -9,9 +10,9 @@ import time
 
 
 # API-key
-openai_api_key = 'XXXX...'
-charactr_client_key = 'XXXX...'
-charactr_api_key = 'XXXX...'
+openai_api_key = os.environ['OPENAI_API_KEY']
+charactr_client_key = os.environ['CHARACTR_CLIENT_KEY']
+charactr_api_key = os.environ['CHARACTR_API_KEY']
 
 
 openai.api_key = openai_api_key
