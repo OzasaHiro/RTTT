@@ -10,7 +10,7 @@ export CHARACTR_API_KEY={your key}
 pip install -r requirements.txt
 python Chat_RTTT_CLIproto.py
 ```
-
+You can try voice conversation with GPT via CLI!
 
 ## API
 ```
