@@ -3,6 +3,7 @@ for GenLAB Hackathon Sep 9th 2023
 
 ## Usage
 ```
+brew install ffmpeg
 export OPENAI_API_KEY={your key}
 export CHARACTR_CLIENT_KEY={your key}
 export CHARACTR_API_KEY={your key}
