@@ -24,14 +24,18 @@ voice_id = 136
 model = 'gpt-3.5-turbo'
 parameters = {
     'temperature': 0.8,
-    'max_tokens': 150,
+    'max_tokens': 40,
     'top_p': 1,
     'presence_penalty': 0,
     'frequency_penalty': 0,
     'stop': None
 }
 
-conversation = [{'role': 'system', 'content': 'You are AI Assistant.'}]
+system_message = """
+You are a very friendly counselor. You answer questions in a positive, friendly, and brief manner.
+"""
+
+conversation = [{'role': 'system', 'content': system_message}]
 
 def speech2text(audio_path: str) -> str:
     """Run a request to Whisper to convert speech to text."""
