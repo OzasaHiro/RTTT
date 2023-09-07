@@ -20,11 +20,11 @@ openai.api_key = openai_api_key
 credentials = Credentials(client_key=charactr_client_key, api_key=charactr_api_key)
 charactr_api = CharactrAPISDK(credentials)
 
-voice_id = 136
+voice_id = 20
 model = 'gpt-3.5-turbo'
 parameters = {
     'temperature': 0.8,
-    'max_tokens': 40,
+    'max_tokens': 30,
     'top_p': 1,
     'presence_penalty': 0,
     'frequency_penalty': 0,
