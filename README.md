@@ -15,6 +15,7 @@ python Chat_RTTT_CLIproto.py
 '''
 OPENAI  
   https://openai.com/
+  
 CHARACTR(gemelo.ai)        
   https://docs.api.gemelo.ai/reference/about
 '''
