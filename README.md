@@ -14,7 +14,7 @@ export CHARACTR_API_KEY={your key}
 pip install -r requirements.txt
 python Chat_RTTT_forRobo_verAPI.py
 ```
-You can try voice conversation with GPT via CLI!
+
 
 ## API
 ```
