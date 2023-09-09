@@ -8,8 +8,7 @@ export OPENAI_API_KEY={your key}
 export CHARACTR_CLIENT_KEY={your key}
 export CHARACTR_API_KEY={your key}
 pip install -r requirements.txt
-pip install -q git+https://github.com/openai/whisper.git 
-python Chat_RTTT_CLIproto.py
+python Chat_RTTT_forRobo_verAPI.py
 ```
 You can try voice conversation with GPT via CLI!
 
