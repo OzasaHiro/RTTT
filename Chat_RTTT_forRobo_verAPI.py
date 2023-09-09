@@ -11,9 +11,9 @@ import time
 
 
 # API-key
-openai_api_key = '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'
-charactr_client_key = 'PbWoDcnUCOvPnGRXuMAMiWa4BWZomRKr'
-charactr_api_key = 'ytwjjrvvqEKJEupLKnNVVzcpnxtdo8wM'
+openai_api_key = os.environ['OPENAI_API_KEY']
+charactr_client_key = os.environ['CHARACTR_CLIENT_KEY']
+charactr_api_key = os.environ['CHARACTR_API_KEY']
 
 openai.api_key = openai_api_key
 
