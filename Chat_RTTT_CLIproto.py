@@ -7,7 +7,7 @@ from pydub import AudioSegment
 from pydub.playback import play
 from charactr_api import CharactrAPISDK, Credentials
 import time
-
+import whisper
 
 # API-key
 openai_api_key = os.environ['OPENAI_API_KEY']
@@ -21,7 +21,7 @@ credentials = Credentials(client_key=charactr_client_key, api_key=charactr_api_k
 charactr_api = CharactrAPISDK(credentials)
 
 voice_id = 20
-model = 'gpt-3.5-turbo'
+model = 'ft:gpt-3.5-turbo-0613:personal:cat-ckd:7wFHWVm8'
 parameters = {
     'temperature': 0.8,
     'max_tokens': 30,
@@ -37,12 +37,16 @@ You are a very friendly counselor. You answer questions in a positive, friendly,
 
 conversation = [{'role': 'system', 'content': system_message}]
 
+wh_model = whisper.load_model("base.en")
+
+
 def speech2text(audio_path: str) -> str:
     """Run a request to Whisper to convert speech to text."""
     try:
         start_time = time.time()
         with open(audio_path, 'rb') as audio_f:
-            result = openai.Audio.transcribe('whisper-1', audio_f)
+            #result = openai.Audio.transcribe('whisper-1', audio_f)
+            result = wh_model.transcribe("recording.wav")
         end_time = time.time()
         whisper_time = end_time - start_time
         text = result['text']
