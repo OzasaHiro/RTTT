@@ -1,6 +1,10 @@
 # RTTT chat system
 for GenLAB Hackathon Sep 9th 2023
 
+
+https://github.com/OzasaHiro/RTTT/assets/37623652/118dee2d-0691-4ef5-8223-dfe09acc0a38
+
+
 ## Usage
 ```
 brew install ffmpeg
