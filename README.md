@@ -1,4 +1,4 @@
-# RTTT chat system
+# Robots To Talk To
 for GenLAB Hackathon Sep 9th 2023
 
 
