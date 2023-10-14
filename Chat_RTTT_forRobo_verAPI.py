@@ -22,6 +22,7 @@ charactr_api = CharactrAPISDK(credentials)
 
 voice_id = 40 #177
 model = 'ft:gpt-3.5-turbo-0613:personal:therapy:7wzU4a63' #verRogers
+model_em = 'gpt-3.5-turbo'
 #model = 'ft:gpt-3.5-turbo-0613:personal:therapy:7wwjFO6A'
 #model = 'ft:gpt-3.5-turbo-0613:personal:cat-ckd:7wFHWVm8'
 parameters = {
@@ -53,7 +54,17 @@ def speech2text(audio_path: str) -> str:
         result = openai.Audio.transcribe('whisper-1', audio_f)
     return result['text']
 
+def get_emotion(request):
+    emotion_prompt = """
+        What is the sentiment of the following text?
+        Give your answer as a single word, "positive", "negative", or "normal".
 
+        text:'''{request}'''
+    """
+
+    user_request = {'role': 'user', 'content': emotion_prompt}
+    result = openai.ChatCompletion.create(model=model_em, messages=[user_request], temperature=0)
+    return result.choices[0].message["content"]
 
 def update_conversation(request, conversation):
     user_request = {'role': 'user', 'content': request}
@@ -93,12 +104,14 @@ def main_loop():
         # Convert speech to text
         start_time = time.time()
         input_text = speech2text("recording.wav")
+        print(emotion)
         end_time = time.time()
         whisper_time = end_time - start_time
         print(f"Converted text from voice input: {input_text}")
 
         # Get ChatGPT response
         start_time = time.time()
+        emotion = get_emotion(input_text)
         update_conversation(input_text, conversation)
         end_time = time.time()
         chat_gpt_time = end_time - start_time
