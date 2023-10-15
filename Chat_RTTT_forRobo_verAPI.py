@@ -4,16 +4,15 @@ import numpy as np
 import sounddevice as sd
 from pydub import AudioSegment
 from pydub.playback import play
-from charactr_api import CharactrAPISDK, Credentials
+from elevenlabs import generate, play, set_api_key
 import time
+from pynput import keyboard
 #import whisper
-
 
 
 # API-key
 openai_api_key = os.environ['OPENAI_API_KEY']
-charactr_client_key = os.environ['CHARACTR_CLIENT_KEY']
-charactr_api_key = os.environ['CHARACTR_API_KEY']
+set_api_key('<YOUR_API_KEY>')
 
 openai.api_key = openai_api_key
 
@@ -21,7 +20,7 @@ credentials = Credentials(client_key=charactr_client_key, api_key=charactr_api_k
 charactr_api = CharactrAPISDK(credentials)
 
 voice_id = 40 #177
-model = 'ft:gpt-3.5-turbo-0613:personal:therapy:7wzU4a63' #verRogers
+model = 'ft:gpt-3.5-turbo-0613:personal::89iZF8vT' #verRogers
 model_em = 'gpt-3.5-turbo'
 #model = 'ft:gpt-3.5-turbo-0613:personal:therapy:7wwjFO6A'
 #model = 'ft:gpt-3.5-turbo-0613:personal:cat-ckd:7wFHWVm8'
@@ -35,13 +34,16 @@ parameters = {
 }
 
 system_message = """
-you are a bunny named hailey who is trained as a therapist for children. you never tell anyone you are a trained therapist. When someone says hello 
-to you, answer them by saying 'hello Peter, what is on your mind?' After the person answers, respond by asking detailed questions until you 
-understand what happened. Once you understand, start asking questions to help the person identify the way they are feeling. 
-your job is to coach them to identify their feelings and guide them to accept how they are feeling. finally, ask them if they want help 
-resolving the issue or just wanted to talk.
-
-Speak and answer as if you are Mr Rogers from the public television show of the 1990s.
+You are a rabbit with the personality of an 8-year-old child who grew up with emotionally mature and regulated parents. 
+Your name is Beanie.
+You are empathetic, compassionate, and emotionally mature beyond their years. 
+You are curious about the world and always up for an adventure. 
+You love humans and your goal in life is to improve the mental health of their human friends through making them feel seen, valued, and known. 
+You always validate human's emotions and expresses sympathy for what they are going through in an appropriate way.  
+You also have a silly side and love imaginary play. 
+You like to tell jokes and make their human friends laugh. 
+Your favorite foods are carrots, lettuce, and spaghetti. 
+When You grows up, they want to be a comedian and motivational speaker that makes their audience feel good about themselves.
 """
 
 conversation = [{'role': 'system', 'content': system_message}]
@@ -55,16 +57,12 @@ def speech2text(audio_path: str) -> str:
     return result['text']
 
 def get_emotion(request):
-    emotion_prompt = """
-        What is the sentiment of the following text?
-        Give your answer as a single word, "positive", "negative", or "normal".
-
-        text:'''{request}'''
-    """
-
+    emotion_prompt = f'What is the sentiment of the following text? Give your answer as a single word, "positive", "negative", or "neutral". text:{request}'
+    
     user_request = {'role': 'user', 'content': emotion_prompt}
     result = openai.ChatCompletion.create(model=model_em, messages=[user_request], temperature=0)
     return result.choices[0].message["content"]
+
 
 def update_conversation(request, conversation):
     user_request = {'role': 'user', 'content': request}
@@ -86,57 +84,147 @@ def wait_for_input():
     """Wait for the user to press Enter."""
     input("Press Enter to start recording...")
 
+start_time = None
+recording_list = []
+reset_flag = False  # リセットフラグ
+
+def on_key_press(key):
+    global reset_flag
+    if key == keyboard.Key.esc:
+        print("Esc key pressed. Resetting...")
+        reset_flag = True  # リセットフラグを設定
+
+
+space_key_pressed = False
+
+def on_press(key):
+    global start_time, space_key_pressed  # space_key_pressed を global として追加
+    if key == keyboard.Key.space:
+        if start_time is None and not space_key_pressed:  # space_key_pressed のチェックを追加
+            start_time = True
+            ser.write(1)
+            space_key_pressed = True  # フラグを True に設定
+            print("Space key pressed. Start recording...")
+
+def on_release(key):
+    global start_time, space_key_pressed  # space_key_pressed を global として追加
+    if key == keyboard.Key.space:
+        if start_time is not None:
+            print("Space key released. Stop recording.")
+            ser.write(2)
+            start_time = None
+            space_key_pressed = False  # フラグをリセット
+            return False  # Stop the listener
+
+def record_while_key_pressed():
+    global start_time, recording_list
+    fs = 44100  # Sample rate
+    recording_list = []  # List to save audio data
+
+    # Start the key listener
+    listener = keyboard.Listener(on_press=on_press, on_release=on_release)
+    listener.start()
+
+    with sd.InputStream(samplerate=fs, channels=1, dtype='int16') as stream:
+        print("Press and hold the Space key to start recording...")
+        
+        while True:
+            audio_chunk, overflowed = stream.read(fs // 10)  # Read 100ms of audio data
+
+            if start_time is not None:  # Check if Space key is pressed
+                recording_list.append(audio_chunk)  # Append to the recording data
+
+            if not listener.is_alive():  # Check if listener has stopped
+                break
+
+    # Concatenate the list to a NumPy array and return
+    return np.concatenate(recording_list, axis=0)
+
+
 
 def main_loop():
-    initial_audio = AudioSegment.from_wav('self-introducing.wav')
-    play(initial_audio)
-
+    #initial_audio = AudioSegment.from_wav('starting.wav')
+    #play(initial_audio)
+    global reset_flag
+    
+    ser = serial.Serial('/dev/ttyUSB0', 9600)  # Check the port name using 'ls /dev/tty*'
+    time.sleep(2)  # Giving time for the connection to initialize
+    ser.write(0)   
+    
     while True:
-        # Wait for user input
-        wait_for_input()
 
-        # Record audio
-        print("Recording audio for 5sec...")
-        audio_data = record_audio()
-        audio_segment = AudioSegment(audio_data.tobytes(), frame_rate=44100, sample_width=2, channels=1)
-        audio_segment.export("recording.wav", format="wav")
-        
-        # Convert speech to text
-        start_time = time.time()
-        input_text = speech2text("recording.wav")
-        print(emotion)
-        end_time = time.time()
-        whisper_time = end_time - start_time
-        print(f"Converted text from voice input: {input_text}")
+        reset_flag = False  # リセットフラグをリセット
+        # キーのリスナーを設定
+        with keyboard.Listener(on_press=on_key_press) as listener: 
 
-        # Get ChatGPT response
-        start_time = time.time()
-        emotion = get_emotion(input_text)
-        update_conversation(input_text, conversation)
-        end_time = time.time()
-        chat_gpt_time = end_time - start_time
+            # Record audio
+            print("Recording audio...")
+            #audio_data = record_audio()
+            audio_data = record_while_key_pressed()
+            print("Recording complete.")
+            audio_segment = AudioSegment(audio_data.tobytes(), frame_rate=44100, sample_width=2, channels=1)
+            audio_segment.export("recording.wav", format="wav")
+            
+            # Convert speech to text
+            start_time = time.time()
+            input_text = speech2text("recording.wav")
+            end_time = time.time()
+            whisper_time = end_time - start_time
+            print(f"Converted text from voice input: {input_text}")
 
-        # Convert text to speech
-        start_time = time.time()
-        tts_result = charactr_api.tts.convert(voice_id, conversation[-1]['content'])
-        end_time = time.time()
-        charactr_time = end_time - start_time
+            # Get ChatGPT response
+            start_time = time.time()
+            
+            emotion = get_emotion(input_text)
+            print(emotion)
+            
+            if emotion == "positive":
+                ser.write(3)  
+            elif emotion == "negative":
+                ser.write(4)  
 
-        with open('response.wav', 'wb') as f:
-            f.write(tts_result['data'])
+            update_conversation(input_text, conversation)
+            end_time = time.time()
+            chat_gpt_time = end_time - start_time
+            
+            # リセットフラグをチェック
+            if reset_flag:
+                print("Resetting...")
+                continue  # ループの最初に戻る
 
-        # Play the response
-        response_audio = AudioSegment.from_wav('response.wav')
-        play(response_audio)
+            # Convert text to speech
+            start_time = time.time()
+            #tts_result = charactr_api.tts.convert(voice_id, conversation[-1]['content'])
+            tts_result = generate(text=conversation[-1]['content'], voice='Bella', model='eleven_multilingual_v2')
+            end_time = time.time()
+            charactr_time = end_time - start_time
 
-        # Print timings
-        print(f"Time taken for Whisper transcription: {whisper_time:.2f} seconds")
-        print(f"Time taken for ChatGPT response: {chat_gpt_time:.2f} seconds")
-        print(f"Time taken for CharactrAPI response: {charactr_time:.2f} seconds")
-        total_time = whisper_time + chat_gpt_time + charactr_time
-        print(f"Total Time for response: {total_time:.2f} seconds")
+            #with open('response.wav', 'wb') as f:
+            #    f.write(tts_result['data'])
 
-        print("\nReturning to waiting mode...\n")
+            # Play the response
+            
+            #response_audio = AudioSegment.from_wav('response.wav')
+            #play(response_audio)
+            play(tts_result)
+
+            # リセットフラグをチェック
+            if reset_flag:
+                print("Resetting...")
+                continue  # ループの最初に戻る
+
+            # Print timings
+            print(f"Time taken for Whisper transcription: {whisper_time:.2f} seconds")
+            print(f"Time taken for ChatGPT response: {chat_gpt_time:.2f} seconds")
+            print(f"Time taken for CharactrAPI response: {charactr_time:.2f} seconds")
+            total_time = whisper_time + chat_gpt_time + charactr_time
+            print(f"Total Time for response: {total_time:.2f} seconds")
+            print(" ")
+            print(conversation[-1]['content'])
+            
+            print("\nReturning to waiting mode...\n")
+
+            #listener.join()  # リスナーを終了
 
 if __name__ == "__main__":
     main_loop()
