@@ -1,7 +1,8 @@
 # Robots To Talk To
 for GenLAB Hackathon Sep 9th 2023
+and TED AI Hackathon Oct 14-15th 2023
 
-fine-tuned GPT therapist
+fine-tuned GPT bunny-bot
 
 https://github.com/OzasaHiro/RTTT/assets/37623652/0dff282f-744b-4f81-bf8e-32c96a8922fe
 
