@@ -2,4 +2,5 @@ openai
 numpy
 sounddevice
 pydub
-charactr-api-sdk
+elevenlabs
+pynput
