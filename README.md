@@ -1,8 +1,14 @@
-# Robots To Talk To
+# Robots To Talk To 
+Beanie the Bunny
+
+
 for GenLAB Hackathon Sep 9th 2023
 and TED AI Hackathon Oct 14-15th 2023
 
+Beanie the Bunny is an LLM-enabled, robotic companion for kids, that makes sure children have the friendship and support they need to grow up with good mental health.
+
 fine-tuned GPT bunny-bot
+https://www.youtube.com/watch?v=l4-5Jt6KFXY
 
 https://github.com/OzasaHiro/RTTT/assets/37623652/0dff282f-744b-4f81-bf8e-32c96a8922fe
 
