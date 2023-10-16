@@ -4,7 +4,7 @@ import numpy as np
 import sounddevice as sd
 from pydub import AudioSegment
 from pydub.playback import play
-from elevenlabs import generate, play, set_api_key
+from elevenlabs import generate, play, set_api_key, Voice
 import time
 from pynput import keyboard
 #import whisper
@@ -20,10 +20,9 @@ credentials = Credentials(client_key=charactr_client_key, api_key=charactr_api_k
 charactr_api = CharactrAPISDK(credentials)
 
 voice_id = 40 #177
-model = 'ft:gpt-3.5-turbo-0613:personal::89iZF8vT' #verRogers
+model = 'ft:gpt-3.5-turbo-0613:personal::89nWjpgS' #verRogers
 model_em = 'gpt-3.5-turbo'
-#model = 'ft:gpt-3.5-turbo-0613:personal:therapy:7wwjFO6A'
-#model = 'ft:gpt-3.5-turbo-0613:personal:cat-ckd:7wFHWVm8'
+
 parameters = {
     'temperature': 0.8,
     'max_tokens': 35,
@@ -102,7 +101,7 @@ def on_press(key):
     if key == keyboard.Key.space:
         if start_time is None and not space_key_pressed:  # space_key_pressed のチェックを追加
             start_time = True
-            ser.write(1)
+            ser.write(b'1')
             space_key_pressed = True  # フラグを True に設定
             print("Space key pressed. Start recording...")
 
@@ -111,7 +110,7 @@ def on_release(key):
     if key == keyboard.Key.space:
         if start_time is not None:
             print("Space key released. Stop recording.")
-            ser.write(2)
+            ser.write(b'2')
             start_time = None
             space_key_pressed = False  # フラグをリセット
             return False  # Stop the listener
@@ -149,7 +148,7 @@ def main_loop():
     
     ser = serial.Serial('/dev/ttyUSB0', 9600)  # Check the port name using 'ls /dev/tty*'
     time.sleep(2)  # Giving time for the connection to initialize
-    ser.write(0)   
+    ser.write(b'0')   
     
     while True:
 
@@ -179,9 +178,9 @@ def main_loop():
             print(emotion)
             
             if emotion == "positive":
-                ser.write(3)  
+                ser.write(b'3')  
             elif emotion == "negative":
-                ser.write(4)  
+                ser.write(b'4')  
 
             update_conversation(input_text, conversation)
             end_time = time.time()
@@ -195,7 +194,9 @@ def main_loop():
             # Convert text to speech
             start_time = time.time()
             #tts_result = charactr_api.tts.convert(voice_id, conversation[-1]['content'])
-            tts_result = generate(text=conversation[-1]['content'], voice='Bella', model='eleven_multilingual_v2')
+            tts_result = generate(text=conversation[-1]['content'], 
+                                  voice=Voice(voice_id='WbabSw27D2F6RfNGFsqw'), 
+                                  model='eleven_multilingual_v2')
             end_time = time.time()
             charactr_time = end_time - start_time
 
