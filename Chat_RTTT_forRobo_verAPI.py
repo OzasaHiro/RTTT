@@ -12,7 +12,8 @@ from pynput import keyboard
 
 # API-key
 openai_api_key = os.environ['OPENAI_API_KEY']
-set_api_key('<YOUR_API_KEY>')
+elevenlabs_api_key = os.environ['ELEVENLABS_API_KEY']
+set_api_key(elevenlabs_api_key)
 
 openai.api_key = openai_api_key
 
