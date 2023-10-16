@@ -10,7 +10,6 @@ Beanie the Bunny is an LLM-enabled, robotic companion for kids, that makes sure 
 fine-tuned GPT bunny-bot
 https://www.youtube.com/watch?v=l4-5Jt6KFXY
 
-https://github.com/OzasaHiro/RTTT/assets/37623652/0dff282f-744b-4f81-bf8e-32c96a8922fe
 
 
 ## Usage
