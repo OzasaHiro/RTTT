@@ -17,7 +17,6 @@ https://github.com/tedai-hackathon/bugs-the-robot
 ```
 brew install ffmpeg
 export OPENAI_API_KEY={your key}
-export CHARACTR_CLIENT_KEY={your key}
 export ELEVENLABS_API_KEY={your key}
 pip install -r requirements.txt
 python Chat_RTTT_forRobo_verAPI.py
