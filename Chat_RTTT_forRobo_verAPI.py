@@ -21,7 +21,7 @@ credentials = Credentials(client_key=charactr_client_key, api_key=charactr_api_k
 charactr_api = CharactrAPISDK(credentials)
 
 voice_id = 40 #177
-model = 'ft:gpt-3.5-turbo-0613:personal::89nWjpgS' #verRogers
+model = 'ft:gpt-3.5-turbo-1106:personal::8IueV4xQ' 
 model_em = 'gpt-3.5-turbo'
 
 parameters = {
@@ -163,7 +163,7 @@ def main_loop():
             audio_data = record_while_key_pressed()
             print("Recording complete.")
             audio_segment = AudioSegment(audio_data.tobytes(), frame_rate=44100, sample_width=2, channels=1)
-            audio_segment.export("recording.wav", format="wav")
+            audio_segment.export("recording.mp3", format="mp3")
             
             # Convert speech to text
             start_time = time.time()
@@ -196,8 +196,8 @@ def main_loop():
             start_time = time.time()
             #tts_result = charactr_api.tts.convert(voice_id, conversation[-1]['content'])
             tts_result = generate(text=conversation[-1]['content'], 
-                                  voice=Voice(voice_id='WbabSw27D2F6RfNGFsqw'), 
-                                  model='eleven_multilingual_v2')
+                                  voice=Voice(voice_id='WbabSw27D2F6RfNGFsqw'), #or voice='Bella'
+                                  model='eleven_turbo_v2') #'eleven_multilingual_v2' for multilingual, 'eleven_turbo_v2' for high-speed, but only English.
             end_time = time.time()
             charactr_time = end_time - start_time
 
