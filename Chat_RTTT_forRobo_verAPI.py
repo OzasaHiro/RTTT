@@ -167,7 +167,7 @@ def main_loop():
             
             # Convert speech to text
             start_time = time.time()
-            input_text = speech2text("recording.wav")
+            input_text = speech2text("recording.mp3")
             end_time = time.time()
             whisper_time = end_time - start_time
             print(f"Converted text from voice input: {input_text}")
