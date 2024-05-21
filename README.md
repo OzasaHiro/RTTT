@@ -3,11 +3,11 @@ Beanie the Bunny
 
 
 for GenLAB Hackathon Sep 9th 2023
-and TED AI Hackathon Oct 14-15th 2023
-<b>TED AI For Good Hackathon 3rd prize<b>
-https://www.linkedin.com/feed/update/urn:li:activity:7120195975163379712/
+and TED AI Hackathon Oct 14-15th 2023<br>
+<b>TED AI For Good Hackathon 3rd prize</b><br>
+https://www.linkedin.com/feed/update/urn:li:activity:7120195975163379712/　<br>
 
-Beanie the Bunny is an LLM-enabled, robotic companion for kids, that makes sure children have the friendship and support they need to grow up with good mental health.
+Beanie the Bunny is an LLM-enabled, robotic companion for kids, that makes sure children have the friendship and support they need to grow up with good mental health.　<br>
 
 fine-tuned GPT bunny-bot
 https://www.youtube.com/watch?v=l4-5Jt6KFXY
